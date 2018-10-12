@@ -8,9 +8,6 @@ import input_data
 # ps: 所有绘图方法只有当样本集是二维，标签集是一维时才生效
 class MyPerceptron:
 
-
-
-
     # 样本集
     sampleSet = 0
     # 标签集
