@@ -1,13 +1,6 @@
-from sklearn.datasets import load_boston
-from sklearn.linear_model import LinearRegression, Ridge
+# encoding: utf-8
+
+import random
 import numpy as np
-
-
-# 用sklearn进行训练并显示结果
-def train_sklearn():
-    x = np.eye(10)
-    x[0][0] = 0
-    print(x)
-
-train_sklearn()
-
+from sklearn.datasets import load_iris
+from sklearn.linear_model import LogisticRegression
