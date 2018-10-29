@@ -3,124 +3,128 @@ import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 
 
-# 线性回归练习
+# 生成训练数据方法
 def load_dataset(n):
     noise = np.random.rand(n)
-    # print(noise)
-
-    x = [ [i] for i in range(n)]
-    # print(x)
-
-    # y=0.5+1
+    x = [ [i] for i in range(n) ]
     y = [ (0.5*x[i][0]+1.0+noise[i]) for i in range(n)]
-    # print(y)
-
     return np.array(x),np.array(y)
 
-x,y = load_dataset(10)
-# print(x.shape,y.shape)
-# plt.plot(x,y)
-# plt.show()
 
-# 画散点图
-plt.scatter(x,y)
-plt.title('data')
-# plt.show()
+# 用sklearn进行训练并显示结果
+def train_sklearn():
+    # 生成训练数据
+    x,y = load_dataset(10)
+
+    # 训练
+    linreg = LinearRegression()
+    linreg.fit(x, y)
+
+    # 取得结果
+    y_pred = linreg.predict(x)
+
+    # 画散点图
+    plt.scatter(x,y)
+
+    # 画出结果直线
+    plt.plot(x,y_pred)
+    plt.show()
+
+    # Theta = {b,w1,w2,...wn}
+    # intercept_:偏移量b
+    # coef_:w
+    #theta = np.hstack((linreg.intercept_,linreg.coef_))
+
+    # X = {1,x1,x2,...xn}
+    #X = np.hstack((np.ones((x.shape[0],1)),x))
+
+    # y_pred = X.dot(theta)
 
 
-linreg = LinearRegression()
-linreg.fit(x,y)
-y_pred = linreg.predict(x)
+# 线性回归——正规方程形式
+def train_normal():
+    # 生成训练数据
+    x, y = load_dataset(10)
 
-# plt.plot(x,y_pred)
-# plt.show()
+    X = np.hstack((np.ones((x.shape[0], 1)), x))
 
-theta = np.hstack((linreg.intercept_,linreg.coef_))
-print(theta)
-print("Q=",linreg.coef_,", b=",linreg.intercept_)
-
-x0 = np.ones((x.shape[0],1))
-print(x0)
-
-X = np.hstack((x0,x))
-print(X)
-
-
-# 正规方程求线性回归
-def normal_equation(X,y):
-    # theta = inv(X'X)X'y
+    # theta = inv(X`X)X`y
     X_T_X = np.linalg.inv(X.T.dot(X))
-    theta = np.dot(X_T_X,X.T).dot(y)
-    return theta
+    theta = np.dot(X_T_X,X.T.dot(y))
+
+    y_pred = X.dot(theta)
+
+    # 画散点图
+    plt.scatter(x, y)
+
+    # 画出结果直线
+    plt.plot(x, y_pred)
+    plt.show()
 
 
+# 线性回归——随机梯度下降
+def train_sgd():
+    # 生成训练数据
+    x, y = load_dataset(10)
 
-theta = normal_equation(X,y)
-print('normal ',theta)
+    X = np.hstack((np.ones((x.shape[0], 1)), x))
 
-y_pred = X.dot(theta)
-print('normal',y_pred)
-# plt.plot(x,y_pred)
-# plt.show()
-
-
-# 随机梯度下降方法求线性回归
-def sgd(X,y,iters,lr):
+    lr = 0.01;
     theta = np.zeros(X.shape[1])
+
     cnt = 0
     while True:
         for i in range(X.shape[0]):
-            theta += lr * (y[i]-np.dot(X[i],theta)) * X[i]
-            cnt += 1
-
-        if cnt >= iters:
+            theta += lr*(y[i]-np.dot(X[i],theta)) *X[i]
+            cnt+=1
+        if cnt >=100:
             break
 
-    return theta
+    y_pred = X.dot(theta)
 
-theta = sgd(X,y,1000,0.01)
-print('normal ',theta)
+    # 画散点图
+    plt.scatter(x, y)
 
-y_pred = X.dot(theta)
-print('normal',y_pred)
-# plt.plot(x,y_pred)
-# plt.show()
+    # 画出结果直线
+    plt.plot(x, y_pred)
+    plt.show()
 
-# 批梯度下降方法求线性回归
-def bgd(X,y,iters,lr,bs):
+
+
+# 线性回归——批机梯度下降
+def train_bgd():
+    # 生成训练数据
+    x, y = load_dataset(10)
+
+    X = np.hstack((np.ones((x.shape[0], 1)), x))
+
+    bs = 3
+    lr = 0.01;
     theta = np.zeros(X.shape[1])
+
     cnt = 0
+
     while True:
         for i in range(int(np.ceil(X.shape[0]/bs))):
-            begin = i*bs
-            end = X.shape[0] if i*bs + bs > X.shape[0] else i*bs +bs
+            begin = i * bs
+            end = X.shape[0] if i * bs + bs > X.shape[0] else i * bs + bs
+
             X_batch = X[begin: end]
             y_batch = y[begin: end]
-            theta += lr * np.dot(X_batch.T,y_batch-np.dot(X_batch,theta))/X_batch.shape[0]
-            cnt += 1
 
-        if cnt >= iters:
+            theta += lr * np.dot(X_batch.T, y_batch - np.dot(X_batch, theta)) / X_batch.shape[0]
+
+            cnt+=1
+        if cnt >=1000:
             break
 
-    return theta
+    y_pred = X.dot(theta)
 
-theta = bgd(X,y,1000,0.01,3)
-print('normal ',theta)
+    # 画散点图
+    plt.scatter(x, y)
 
-y_pred = X.dot(theta)
-print('normal',y_pred)
-plt.plot(x,y_pred)
-plt.show()
+    # 画出结果直线
+    plt.plot(x, y_pred)
+    plt.show()
 
-
-
-
-
-
-
-
-
-
-
-
-
+train_bgd()

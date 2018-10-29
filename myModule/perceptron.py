@@ -4,7 +4,7 @@ import input_data
 
 
 
-# 单层感知机简单形式
+# 单层感知机
 # ps: 所有绘图方法只有当样本集是二维，标签集是一维时才生效
 class MyPerceptron:
 
